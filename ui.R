@@ -31,7 +31,7 @@ ui <- navbarPage(
     # App title ----
     titlePanel(div(
       windowTitle = "BankDataImage",
-      img(src = "bankDateImage.jpg", width = "100%", class = "bg"),
+      img(src = "Image/bankDateImage.jpg", width = "100%", class = "bg"),
     )),
 
     tags$br()

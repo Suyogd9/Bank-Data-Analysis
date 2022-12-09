@@ -8,6 +8,12 @@
 #
 
 library(shiny)
+library(tidyverse)
+
+
+bankData <- read_csv("bankData.csv")
+
+
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {

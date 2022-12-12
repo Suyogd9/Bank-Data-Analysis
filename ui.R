@@ -1,11 +1,4 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 
 library(shiny)
 ##########################################
@@ -294,7 +287,93 @@ ui <- navbarPage(
            tabsetPanel(
                    type = "tabs",
                    tabPanel(
-                     "Modeling Info"),
+                     "Modeling Info",
+                      fluidRow(
+                        column(
+                          4,
+                          h2("Generalized Linear Model: Binary Logistic Regression"),
+                          br(),
+                          h4(
+                            p("Binary logistic regression is a statistical model that is used to predict the probability
+                              of a binary outcome, such as the likelihood of an individual having subscribe to term deposit or 
+                              belonging to a certain class. The model uses a logistic function to model the relationship
+                              between the dependent variable (the binary outcome) and one or more independent variables 
+                              (also called predictors), which can be continuous or categorical."),
+                            p(withMathJax(),
+                              helpText('$$logit(p) = log(\\frac{p}{1-p}) = \\beta_0 + \\beta_1 \\cdot x_1', 
+                              '+... + \\beta_k \\cdot x_k$$')),
+                            p(strong(em("Pros:")),br(),"One of the main advantages of binary logistic regression is that it 
+                            is a widely used and well-understood technique, so there are many resources available to help you fit 
+                            and interpret the model. Additionally, the model is relatively simple and easy to implement, so it can
+                              be applied to a wide range of data sets."),
+                            p(strong(em("Cons:")),br(),"However, there are also some disadvantages to using binary logistic regression. 
+                              One of the main limitations is that the model assumes that the relationship between the dependent and independent 
+                              variables is linear, which may not always be the case in real-world data sets. Additionally, the model can only 
+                              be used to predict binary outcomes, so it is not suitable for predicting outcomes with more than two categories. 
+                              Finally, the model can be sensitive to outliers, so it is important to carefully check your data for unusual 
+                              observations before fitting the model.")
+                          )
+                        ),
+                        column(
+                          4,
+                          h2("Classification Tree"),
+                          br(),
+                          h4(
+                            p("A classification tree is a type of decision tree that is used to predict the class or category of an individual 
+                              based on a set of features or attributes. The tree is constructed by splitting the data into subsets based on the 
+                              values of the features, and the resulting subsets are used to make predictions about the class of an individual."),
+                            p("The Gini index and the information gain are used in classification trees, which are a type of decision tree that 
+                              is used to predict the class or category of an individual based on a set of features or attributes. The Gini index 
+                              and the information gain are used to evaluate the quality of the splits in the tree, and to determine the best split
+                              at each node in the tree."),
+                            p("Gini Index can be given as follows:", style = "color: black;"),
+                            p(withMathJax(),
+                              helpText('$$ G = \\frac{2 \\sum_{i=1}^{n} \\sum_{j=1}^{n}', 
+                                       '|x_i - x_j|}{n^2 \\sum_{i=1}^{n} x_i} $$')),
+                            p("Information can be given as follows:", style = "color: black;"),
+                            p(withMathJax(),
+                              helpText('$$ IG(T,a) = H(T) - \\sum_{v \\in \\text{Values(a)}} \\frac{|T_v|}{|T|}H(T_v) $$')),
+                            p(strong(em("Pros:")),br(),"One of the main advantages of classification trees is that they are simple to understand 
+                              and interpret, which makes them a useful tool for data exploration and visualization. Additionally, classification 
+                              trees can handle both continuous and categorical data, and they can handle missing data without the need for 
+                              imputation."),
+                            p(strong(em("Cons:")),br(),"There are also some disadvantages to using classification trees. One of the main limitations 
+                              is that the trees can be sensitive to small changes in the data, which can result in large changes in the structure of 
+                              the tree and the predictions it makes. Additionally, classification trees can be prone to overfitting, which means that 
+                              they may not generalize well to new data. Finally, classification trees can be computationally intensive to construct 
+                              and may not be suitable for large data sets."),
+                            div(
+                              windowTitle = "decisionTreeSG",
+                              img(src = "decisionTree.png", width = "100%", class = "bg"),
+                            )
+                            
+                          )
+                        ),
+                        column(
+                          4,
+                          h2("Random Forest Model"),
+                          br(),
+                          h4(
+                            p("Random forests are a type of ensemble machine learning model. Ensemble models combine the predictions of multiple individual 
+                              models to make more accurate predictions than any of the individual models could make on their own. In the case of random forests, 
+                              the individual models are decision trees, which are trained on different subsets of the data and using different random subsets of 
+                              the features of the data."),
+                            p(strong(em("Pros:")),br(),"One of the main advantages of random forests is that they can be used for both regression and classification 
+                              tasks, and they perform well on a wide range of data. They are also relatively simple to use and understand, which makes them a good choice
+                              for many applications. Another advantage is that they are less susceptible to overfitting than many other types of models."),
+                            p(strong(em("Cons:")),br(),"Some disadvantages of random forests include the fact that they can be computationally expensive to train, especially
+                              when dealing with large datasets. They can also be difficult to interpret, since the individual decision trees that make up the forest are usually
+                              not easy to understand on their own. Finally, random forests may not always perform as well as other types of models on very large datasets with 
+                              millions or billions of examples."),
+                            div(
+                              windowTitle = "randomForestTreeSG",
+                              img(src = "randForest1.jpeg", width = "100%", class = "bg"),
+                            )
+                          )
+                        )
+                      )
+ 
+                     ),
                    tabPanel(
                      "Model Fitting",
                      fluidRow(

@@ -548,7 +548,7 @@ ui <- navbarPage(
                           selectInput("educationPred","Select the type of education for prediction:",
                                       unique(bankDataUI$education)),
                           br(),
-                          selectInput("deafultPred","Select the type of default credit for prediction:",
+                          selectInput("defaultPred","Select the type of default credit for prediction:",
                                       unique(bankDataUI$default)),
                           br(),
                           selectInput("housingPred","Select the type of housing for prediction:",
@@ -589,7 +589,26 @@ ui <- navbarPage(
                           br()
                         ),
                         mainPanel(
-                          textOutput("finalPred")
+                          h3(style = "font-size: 16px; font-style: italic; color: black;",
+                             "Please use the options on the side to select a", strong(em("model")),"that you want to use to predict
+                             whether a customer will subscribe to a term deposit. Once you have selected a model, choose the ",
+                             strong(em("variables"))," that you want to include in the model and run the prediction. 
+                             The app will then tell you whether the customer is likely to", strong(em("subscribe")),
+                             "to the term deposit or not.",align = "center"),
+                          br(),
+                          br(),
+                          br(),
+                          br(),
+                          br(),
+                          h3("Prediction",align = "center"),
+                          fluidRow(
+                            align = "center",
+                            textOutput("finalPred"),
+                          ),
+                          br(),
+                          br(),
+                          br(),
+                          br()
                         )
                       )
                      )

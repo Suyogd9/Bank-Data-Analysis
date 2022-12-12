@@ -438,6 +438,67 @@ shinyServer(function(input, output, session) {
 #---------------------Prediction Tab------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------# 
   
-  
+ output$finalPred <- renderText({
+   
+   if (is.null(modelFitValues$randForFit)){
+     outputVal <- "Please train the model before predicting the output"
+   } else {
+     if (input$modelSelect == "log"){
+       fitModel <- modelFitValues$glmModelFit
+     }else if (input$modelSelect == "classTree"){
+       fitModel <- modelFitValues$classTreeFit
+     }else if (input$modelSelect == "randFor"){
+       fitModel <- modelFitValues$randForFit
+           }
+   
+     age <- input$agePred
+     job <- input$jobPred
+     marital <- input$maritalPred
+     education <- input$educationPred
+     default <- input$defaultPred
+     housing <- input$housingPred
+     loan <- input$loanPred
+     contact <- input$contactPred
+     month <- input$monthPred
+     day_of_week <- input$dayPred
+     duration <- input$durationPred
+     campaign <- input$campaignPred
+     pdays <- input$pDaysPred
+     previous <- input$previousPred
+     poutcome <- input$poutPred
+     
+     userDF <- tibble(age,
+                       job,
+                       marital,
+                       education,
+                       default,
+                       housing,
+                       loan,
+                       contact,
+                       month,
+                       day_of_week,
+                       duration,
+                       campaign,
+                       pdays,
+                       previous,
+                       poutcome)
+     
+     if(input$modelSelect == "classTree"){
+       
+       predictionVal <- predict(fitModel,type = "class",newdata = userDF)
+       
+     }else{          
+        predictionVal <- predict(fitModel,newdata = userDF)
+     }
+     
+     if (predictionVal== "yes"){
+       outputVal = "Subscribed for Term deposit"
+       }
+     else if (predictionVal== "no"){
+       outputVal = "Did not subscribe for Term deposit"
+       }
+   }
+   outputVal
+ })
   
 })

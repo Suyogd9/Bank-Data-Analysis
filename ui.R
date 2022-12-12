@@ -5,10 +5,7 @@ library(shiny)
 ####   Shiny ui                       ####
 ##########################################
 library(shinyWidgets)
-library(shiny)
-library(shinyWidgets)
-library(shiny)
-library(plotly)
+library(tidyverse)
 library(shinythemes)
 library(DT)
 library(rsconnect)

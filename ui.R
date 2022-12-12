@@ -23,6 +23,7 @@ library(jpeg)
 library(shinydashboard)
 library(dplyr)
 library(ggpubr)
+library(corrplot)
 # ------------------
 # Main title section
 # ------------------
@@ -30,6 +31,12 @@ library(ggpubr)
 colNameList <- c("Age","Job Type", "Marital status", "Education", "Has Credit", "Housing", "Loan", "Contact Type",
                  "Month", "Day_of_the_week","Last_contact_duration","Campaign", "pDays(Last contacted)","Previous(Previously contacted or not)",
                  "pOutcome(previous marketing campaign)", "Term deposit")
+
+bankDataUI <- read_csv("data/bankData.csv")
+bankDataUI <- bankDataUI %>%
+  mutate(education = gsub("\\.", " ",education)) %>%
+  mutate(pdays = if_else(pdays == 999,0, pdays))
+bankDataUI <- mutate_if(bankDataUI, is.character, as.factor)
 
 ui <- navbarPage(
   "Bank Data Analysis",
@@ -40,14 +47,20 @@ ui <- navbarPage(
       windowTitle = "bankImageSG",
       img(src = "bankImage2.jpg", width = "100%", class = "bg"),
     )),
-    tags$hr(),
     tabsetPanel(
       type = "tabs",
       tabPanel( "Purpose of the App", 
                 tags$style(HTML(
+                  
                   "#my-box {
                   font-family: 'Times New Roman';
-                        font-size: 16px;}"
+                        font-size: 16px;}
+                  
+                  .sidebar {
+                     border: none;
+                    }
+                  
+                  "
                 )),
                 box(title = "",
                     id = "my-box",
@@ -87,7 +100,13 @@ ui <- navbarPage(
                 tags$style(HTML(
                   "#my-box1 {
                   font-family: 'Times New Roman';
-                        font-size: 16px;}"
+                        font-size: 16px;}
+                  
+                  .sidebar {
+                     border: none;
+                    }
+                  
+                  "
                 )),
                 box(title = "",
                     id = "my-box1",
@@ -107,317 +126,7 @@ ui <- navbarPage(
       ),
 
     tags$br()
-#     
-#     
-#     ##########################################
-#     ####  Panel: Main>Summary             ####
-#     ##########################################
-#     
-#     tabsetPanel(
-#       type = "tabs",
-#       tabPanel(
-#         "Summary",
-#         ################################################
-#         #### Panel: Main>Summary>Tables & Pie Chart ####
-#         ################################################
-#         
-#         # ------------------
-#         # ranking $ pie chart section
-#         # ------------------
-#         
-#         sidebarLayout(
-#           sidebarPanel(
-#             h3("Data by Year"),
-#             tags$br(),
-#             selectInput(
-#               "checkYear",
-#               "Select Year",
-#               choices = list("2018", "2017", "2016",
-#                              "2015", "2014", "2013"),
-#               selected = "2018"
-#             )
-#           ),
-#           
-#           mainPanel(
-#             tabsetPanel(
-#               type = "tabs",
-#               tabPanel("Ranking", tableOutput("datahead")),
-#               tabPanel("No. of Graduates", plotOutput(outputId = "piePlot"))
-#             ),
-#             tags$br(),
-#             tags$br(),
-#           )
-#         ),
-#         tags$hr(),
-#         
-#         
-#         sidebarLayout(
-#           sidebarPanel(
-#             # ------------------
-#             # Data overview filters
-#             # ------------------
-#             
-#             h3("Data Overview"),
-#             tags$br(),
-#             setSliderColor(c("#2c3e50 ", "#2c3e50"), c(1, 2)),
-#             sliderInput(
-#               "incomeRange",
-#               label = "Salary Range",
-#               min = 1600,
-#               max = 5000,
-#               value = c(1600, 5000)
-#             ),
-#             # setSliderColor(c("e67e22 ", "#e67e22"), c(1, 2)),
-#             sliderInput(
-#               "employRange",
-#               label = "Employment Rate Range",
-#               min = 0,
-#               max = 100,
-#               value = c(0, 100)
-#             ),
-#             selectInput(
-#               "checkYearGroup",
-#               "Select Year",
-#               choices = data$year,
-#               selected = "2018",
-#               multiple = TRUE
-#             ),
-#             
-#             #checkboxGroupInput("checkYear", label = "Select Year",
-#             #                  choices = list("2013", "2014", "2015", "2016", "2017", "2018"),
-#             #                 selected = list("2013", "2014", "2015", "2016", "2017", "2018"), inline = TRUE),
-#             
-#             actionButton("actionDT", "Filter", class = "btn btn-warning"),
-#           ),
-#           mainPanel(
-#             h3("Browse All"),
-#             tags$br(),
-#             dataTableOutput("myTable"),
-#             tags$br(),
-#             tags$br(),
-#           )
-#         ),
-#         tags$hr(),
-#       ),
-#       
-#       
-#       ################################################
-#       #### Panel: Main>Plots                      ####
-#       ################################################
-#       
-#       tabPanel(
-#         "Visual Comparison",
-#         
-#         # --------------------
-#         # density plot section
-#         # --------------------
-#         
-#         sidebarLayout(
-#           sidebarPanel(
-#             h3("Density Plot Panel"),
-#             tags$br(),
-#             selectInput(
-#               "selectvar",
-#               label = "Choose a variable to display",
-#               choices = c(
-#                 "Basic Montly Salary (Median)" = "basic_monthly_median",
-#                 "Fulltime Employment Rate" = "employment_rate_ft_perm"
-#               ),
-#               selected = "basic monthly mean"
-#             ),
-#             
-#             checkboxGroupInput(
-#               "checkGroup",
-#               label = "Select University",
-#               choices = list(
-#                 "Nanyang Technological University" = "Nanyang Technological University",
-#                 "National University of Singapore" = "National University of Singapore",
-#                 "Singapore Institute of Technology" = "Singapore Institute of Technology",
-#                 "Singapore Management University" = "Singapore Management University",
-#                 "Singapore University of Social Sciences" = "Singapore University of Social Sciences",
-#                 "Singapore University of Technology and Design" = "Singapore University of Technology and Design"
-#               ),
-#               selected = list(
-#                 "Nanyang Technological University" = "Nanyang Technological University",
-#                 "National University of Singapore" = "National University of Singapore",
-#                 "Singapore Institute of Technology" = "Singapore Institute of Technology",
-#                 "Singapore Management University" = "Singapore Management University",
-#                 "Singapore University of Social Sciences" = "Singapore University of Social Sciences",
-#                 "Singapore University of Technology and Design" = "Singapore University of Technology and Design"
-#               )
-#             ),
-#           ),
-#           mainPanel(
-#             h3("Distribution"),
-#             plotlyOutput(outputId = "densityPlot"),
-#             tags$br(),
-#             tags$br()
-#           )
-#         ),
-#         tags$hr(),
-#         
-#         # --------------------
-#         # bar plot section
-#         # --------------------
-#         sidebarLayout(
-#           sidebarPanel(
-#             h3("Bar Plot Panel"),
-#             tags$br(),
-#             radioButtons(
-#               "radio",
-#               label = "Select University",
-#               choices = list(
-#                 "Nanyang Technological University" = "Nanyang Technological University",
-#                 "National University of Singapore" = "National University of Singapore",
-#                 "Singapore Institute of Technology" = "Singapore Institute of Technology",
-#                 "Singapore Management University" = "Singapore Management University",
-#                 "Singapore University of Social Sciences" = "Singapore University of Social Sciences",
-#                 "Singapore University of Technology and Design" = "Singapore University of Technology and Design"
-#               ),
-#               selected = "Nanyang Technological University"
-#             ),
-#             tags$hr()
-#           ),
-#           mainPanel(
-#             h3("Median Income by School (aggregate)"),
-#             plotlyOutput(outputId = "uniPlot"),
-#             tags$br(),
-#             tags$br()
-#           )
-#         ),
-#         tags$hr(),
-#         
-#         # --------------------
-#         # box plot section
-#         # --------------------
-#         sidebarLayout(
-#           sidebarPanel(
-#             h3("Box Plot Panel"),
-#             tags$br(),
-#             checkboxGroupInput(
-#               "checkGroupbox",
-#               label = "Select University",
-#               choices = list(
-#                 "Nanyang Technological University" = "Nanyang Technological University",
-#                 "National University of Singapore" = "National University of Singapore",
-#                 "Singapore Institute of Technology" = "Singapore Institute of Technology",
-#                 "Singapore Management University" = "Singapore Management University",
-#                 "Singapore University of Social Sciences" = "Singapore University of Social Sciences",
-#                 "Singapore University of Technology and Design" = "Singapore University of Technology and Design"
-#               ),
-#               selected = list(
-#                 "Nanyang Technological University" = "Nanyang Technological University",
-#                 "National University of Singapore" = "National University of Singapore",
-#                 "Singapore Institute of Technology" = "Singapore Institute of Technology",
-#                 "Singapore Management University" = "Singapore Management University",
-#                 "Singapore University of Social Sciences" = "Singapore University of Social Sciences",
-#                 "Singapore University of Technology and Design" = "Singapore University of Technology and Design"
-#               )
-#             ),
-#             
-#             tags$hr()
-#           ),
-#           mainPanel(
-#             h3("Median Income Comparison (aggregate)"),
-#             plotlyOutput(outputId = "boxPlot"),
-#             tags$br(),
-#             tags$br(),
-#             tags$br(),
-#           )
-#         ),
-#         
-#         tags$hr(),
-#         
-#         # --------------------
-#         # Scatter plot section
-#         # --------------------
-#         
-#         
-#         fluidPage(fluidRow(
-#           h3("Fulltime Employment Rate vs. Median Income by University in 2018"),
-#           align = "center",
-#           plotlyOutput(outputId = "scatPlot", width = "100%"),
-#           div(style = "height:400px")
-#         )),
-#         
-#         tags$br(),
-#         tags$br(),
-#         tags$hr(),
-#         
-#       ),
-#       
-#       
-#       ################################################
-#       #### Panel: Main>Details                    ####
-#       ################################################
-#       
-#       tabPanel(
-#         "Details By University",
-#         h3("Graduates' Income and Employment Rate by Year", align = "center"),
-#         br(),
-#         div(style = "display:vertical-align:center;center-align",
-#             fluidRow(
-#               column(
-#                 4,
-#                 selectInput(
-#                   "detailUniversity",
-#                   label = "Select University",
-#                   choices = unique(data$university),
-#                   selected = "National University of Singapore",
-#                   width = 400
-#                 ),
-#               ),
-#               column(
-#                 4,
-#                 selectInput(
-#                   "detailSchool",
-#                   "Select School",
-#                   choices = "",
-#                   selected = "",
-#                   width = 400
-#                 )
-#               ),
-#               column(4,
-#                      column(
-#                        8,
-#                        selectInput(
-#                          "detailMajor",
-#                          "Select Program",
-#                          choices = "",
-#                          selected = "",
-#                          width = 400
-#                        )
-#                      ),
-#                      column(
-#                        4,
-#                        tags$br(),
-#                        actionButton("detailFilter", "Filter", class = "btn btn-warning btn-sm")
-#                      ))
-#             )),
-#         
-#         tags$br(),
-#         tags$br(),
-#         tags$hr(),
-#         tags$br(),
-#         
-#         fluidRow(
-#           column(4, tableOutput("detailTable")),
-#           column(4, h5("Montly Median Income", align="center"), plotOutput(outputId = "detailPlot", height = "300px")),
-#           column(4, h5("Fulltime Employment rate", align="center"), plotOutput(outputId = "detailPlotem", height = "300px"))
-#         ),
-#         
-#         tags$br(),
-#         tags$br(),
-#         tags$br(),
-#         tags$br(),
-#         tags$hr(),
-#         tags$br()
-#       )
-#     )
   ),
-#   
-#   
-#   
   ################################################
   #### Panel: Data                             ####
   ################################################
@@ -447,10 +156,8 @@ ui <- navbarPage(
            tabsetPanel(
              type = "tabs",
              tabPanel( "Plots",
-                      tags$br(),
-                       fluidRow(
-                         column(
-                           4,
+                       sidebarLayout(
+                         sidebarPanel(
                            radioButtons("barPlotRadio","Select the variable for Bar plot:",
                                         choices = c("Job Type" = "job",
                                                     "Marital Status" = "marital",
@@ -460,15 +167,14 @@ ui <- navbarPage(
                            numericInput("twistAngle","Select the angle of text on the x-axis:",
                                         value = 90, min = 18, max = 90)
                          ),
-                         column(
-                           8, h3("Bar plot", align = "center"),
+                         mainPanel(
+                           h3("Bar plot", align = "center"),
                            plotOutput("barPlot")
                          )
                        ),
                        tags$br(),
-                       fluidRow(
-                         column(
-                           4,
+                      sidebarLayout(
+                        sidebarPanel(
                            radioButtons("histPlotRadio","Select the variable for Histogram plot:",
                                         choices = c("Age" = "age",
                                                     "Duration" = "duration",
@@ -477,14 +183,68 @@ ui <- navbarPage(
                            numericInput("binWidth","Select the binwidth:",
                                         value = 2, min = 1, max = 30)
                          ),
-                         column(
-                           8,h3("Histogram plot", align = "center"),
+                        mainPanel(
+
+                           h3("Histogram plot", align = "center"),
                            plotOutput("histPlot")
                            
                          )
-                       )),
+                       ),
+                      sidebarLayout(
+                        sidebarPanel(
+                                 radioButtons("boxPlotRadio","Select the variable for Box plot:",
+                                              choices = c("Age" = "age",
+                                                          "Duration" = "duration",
+                                                          "Campaign" = "campaign",
+                                                          "Last contacted from a previous campaign" = "pdays",
+                                                          "Contacts performed before this campaign" = "previous"),
+                                              selected = "age"),
+                                 numericInput("aplhaValue","Select the opacity of the points:",
+                                              value = 0.03, min = 0, max = 1)
+                               ),
+                        mainPanel(
+                                 h3("Box plot", align = "center"),
+                                 plotOutput("boxPlot")
+                                 
+                               )
+                        ),
+                      sidebarLayout(
+                        sidebarPanel(
+                          
+                          radioButtons("scatterPlotRadio1","Select the First variable for Scatter plot:",
+                                       choices = c("Age" = "age",
+                                                   "Duration" = "duration",
+                                                   "Campaign" = "campaign",
+                                                   "Last contacted from a previous campaign" = "pdays",
+                                                   "Contacts performed before this campaign" = "previous"),
+                                       selected = "age"),
+                          radioButtons("scatterPlotRadio2","Select the Second variable for Scatter plot:",
+                                       choices = c("Age" = "age",
+                                                   "Duration" = "duration",
+                                                   "Campaign" = "campaign",
+                                                   "Last contacted from a previous campaign" = "pdays",
+                                                   "Contacts performed before this campaign" = "previous"),
+                                       selected = "duration"),
+                        ),
+                        mainPanel(
+                          h3("Scatter plot", align = "center"),
+                          plotOutput("scatterPlot")
+                          
+                        )
+                      ),
+                      
+                      fluidRow(
+                        column(
+                          2
+                        ),
+                        column(style = "border: 4px double #54B6F9;",
+                          8,
+                          h3("Correlation plot", align = "center"),
+                          plotOutput("corrPlot")
+                        )
+                      )
+                      ),
              tabPanel("Summaries",
-                      tags$br(),
                       fluidRow(
                         column(
                           4,
@@ -507,7 +267,7 @@ ui <- navbarPage(
                           dataTableOutput("summTable")
                           )
                       ),
-                      tags$br(),
+                      hr(),
                       fluidRow(
                         column(
                           4,
@@ -536,9 +296,303 @@ ui <- navbarPage(
                    tabPanel(
                      "Modeling Info"),
                    tabPanel(
-                     "Model Fitting"),
+                     "Model Fitting",
+                     fluidRow(
+                       height = 100,
+                       column(
+                         3
+                       ),
+                       column(
+                         6,
+                         tags$style(".col-sm-6 {border: 4px solid #54B6F9;}"),
+                         tags$br(),
+                         box(width = 12,
+                             border = FALSE,
+                             height = "320px",
+                             h3(style = "font-size: 16px; font-style: italic; color: black;",
+                             "Please select the value of the split ratio by using the slider input giving alongside. 
+                              After selecting the split ratio click",strong("Split Data"),"button that will split the 
+                              data into training and test data.This can be further use to train and test the models."),
+                              br(),
+                               sliderInput(
+                                 inputId = "splitRatio",
+                                 label = "Split Lamp to be used for Training Data:",
+                                 min = 0.1,
+                                 max = 0.9,
+                                 value = 0.7
+                               ),
+                               actionButton("goButton", "Split Data"),
+                               hr(),
+                               conditionalPanel(
+                                inputId = "splitText",
+                                condition = "input.goButton",
+                                textOutput("splitStatus")
+                              )
+                             )
+                           )
+                       ),
+                     br(),
+                     hr(),
+                     fluidRow(
+                       column(
+                         4,
+                         tags$style(".col-sm-4 {border: 4px solid #54B6F9;}"),
+                         checkboxGroupInput("glmPredictors",
+                                              "Please select the variables for fitting logistic regression model:",
+                                              choices = c("Age" = "age",
+                                                          "Job Type" = "job",
+                                                          "Marital Status" = "marital",
+                                                          "Type of education" = "education",
+                                                          "Has default credit" = "default", 
+                                                          "Housing status" = "housing",
+                                                          "Loan status" = "loan",
+                                                          "Type of contact" = "contact",
+                                                          "Month" = "month",
+                                                          "Day of the week" = "day_of_week",
+                                                          "Duration" = "duration",
+                                                          "Campaign" = "campaign",
+                                                          "Last contacted from a previous campaign" = "pdays",
+                                                          "contacts performed before this campaign" = "previous",
+                                                          "outcome of the previous marketing campaign" = "poutcome"),
+                                              selected = c("Age" = "age",
+                                                           "Job Type" = "job",
+                                                           "Marital Status" = "marital",
+                                                           "Type of education" = "education",
+                                                           "Has default credit" = "default", 
+                                                           "Housing status" = "housing",
+                                                           "Loan status" = "loan",
+                                                           "Type of contact" = "contact",
+                                                           "Month" = "month",
+                                                           "Day of the week" = "day_of_week",
+                                                           "Duration" = "duration",
+                                                           "Campaign" = "campaign",
+                                                           "Last contacted from a previous campaign" = "pdays",
+                                                           "contacts performed before this campaign" = "previous",
+                                                           "outcome of the previous marketing campaign" = "poutcome"))
+                       ),
+                       column(
+                         4,
+                         tags$style(".col-sm-4 {border: 4px solid #54B6F9;}"),
+                         checkboxGroupInput("classTreePredictors",
+                                              "Please select the variables for fitting classification tree model:",
+                                              choices = c("Age" = "age",
+                                                          "Job Type" = "job",
+                                                          "Marital Status" = "marital",
+                                                          "Type of education" = "education",
+                                                          "Has default credit" = "default", 
+                                                          "Housing status" = "housing",
+                                                          "Loan status" = "loan",
+                                                          "Type of contact" = "contact",
+                                                          "Month" = "month",
+                                                          "Day of the week" = "day_of_week",
+                                                          "Duration" = "duration",
+                                                          "Campaign" = "campaign",
+                                                          "Last contacted from a previous campaign" = "pdays",
+                                                          "contacts performed before this campaign" = "previous",
+                                                          "outcome of the previous marketing campaign" = "poutcome"),
+                                              selected = c("Age" = "age",
+                                                           "Job Type" = "job",
+                                                           "Marital Status" = "marital",
+                                                           "Type of education" = "education",
+                                                           "Has default credit" = "default", 
+                                                           "Housing status" = "housing",
+                                                           "Loan status" = "loan",
+                                                           "Type of contact" = "contact",
+                                                           "Month" = "month",
+                                                           "Day of the week" = "day_of_week",
+                                                           "Duration" = "duration",
+                                                           "Campaign" = "campaign",
+                                                           "Last contacted from a previous campaign" = "pdays",
+                                                           "contacts performed before this campaign" = "previous",
+                                                           "outcome of the previous marketing campaign" = "poutcome"))
+                       ),
+                       column(
+                         4,
+                         tags$style(".col-sm-4 {border: 4px solid #54B6F9;}"),
+                         checkboxGroupInput("randomForestPredictors",
+                                              "Please select the variables for fitting Random forest model:",
+                                              choices = c("Age" = "age",
+                                                          "Job Type" = "job",
+                                                          "Marital Status" = "marital",
+                                                          "Type of education" = "education",
+                                                          "Has default credit" = "default", 
+                                                          "Housing status" = "housing",
+                                                          "Loan status" = "loan",
+                                                          "Type of contact" = "contact",
+                                                          "Month" = "month",
+                                                          "Day of the week" = "day_of_week",
+                                                          "Duration" = "duration",
+                                                          "Campaign" = "campaign",
+                                                          "Last contacted from a previous campaign" = "pdays",
+                                                          "contacts performed before this campaign" = "previous",
+                                                          "outcome of the previous marketing campaign" = "poutcome"),
+                                              selected = c("Age" = "age",
+                                                           "Job Type" = "job",
+                                                           "Marital Status" = "marital",
+                                                           "Type of education" = "education",
+                                                           "Has default credit" = "default", 
+                                                           "Housing status" = "housing",
+                                                           "Loan status" = "loan",
+                                                           "Type of contact" = "contact",
+                                                           "Month" = "month",
+                                                           "Day of the week" = "day_of_week",
+                                                           "Duration" = "duration",
+                                                           "Campaign" = "campaign",
+                                                           "Last contacted from a previous campaign" = "pdays",
+                                                           "contacts performed before this campaign" = "previous",
+                                                           "outcome of the previous marketing campaign" = "poutcome")),
+                         br(),
+                         sliderInput(
+                           inputId = "mtry",
+                           label = "Select the number of random variables collected at each split:(mtry)",
+                           min = 1,
+                           max = 8,
+                           value = 4
+                         )
+                       )
+                     ),
+                     br(),
+                     hr(),
+                     fluidRow(
+                       column(3),
+                       column(6,
+                              tags = list(
+                                tags$style(".col-sm-6 {border: 4px solid #54B6F9;}")),
+                              tags$br(),
+                              box(width = 12,
+                                  height = "220px",
+                                  h3(style = "font-size: 16px; font-style: italic; color: black;",
+                                     "After selecting the variables for all the models, click",strong("Train Models"),
+                                     "button that will train all the three models and all the results can be seen below."),
+                                  br(),
+                                  h3(style = "font-size: 16px; font-style: italic; color: #D8320E;",
+                                     "Warning!! Random Forest takes approximately 2 minutes to run with default settings...
+                                      Please be patient!!"),
+                                  br(),
+                                  actionButton("trainButton", "Train Models"),
+                                  br()
+                              )),
+                       column(3)
+                     ),
+                     br(),
+                     hr(),
+                     fluidRow(
+                       column(
+                         4,
+                          h3("Traning accuracy for generalized linear regression model:"),
+                          verbatimTextOutput("trainAccuracyglm"),
+                          br(),
+                          h3("Testing accuracy for generalized linear regression model:"),
+                          verbatimTextOutput("testAccuracyglm"),
+                          br(),
+                          h3("Confusion matrix for generalized linear regression model:"),
+                          verbatimTextOutput("confglm"),
+                          br(),
+                          h3("Summary statistics for generalized linear regression model:"),
+                          verbatimTextOutput("summaryStatglm")
+                       ),
+                       column(
+                         4,
+                         h3("Traning accuracy for classification tree:"),
+                         verbatimTextOutput("trainAccuracyClassificationtree"),
+                         br(),
+                         h3("Testing accuracy for classification tree:"),
+                         verbatimTextOutput("testAccuracyclass"),
+                         br(),
+                         h3("Confusion matrix for classification tree:"),
+                         verbatimTextOutput("confClass"),
+                         br(),
+                         plotOutput("classTreePlot"),
+                         br(),
+                         h3("Summary statistics for classification tree:"),
+                         verbatimTextOutput("summaryStatClassTree")
+                       ),
+                       column(
+                         4,
+                         h3("Traning accuracy for Random Forest model:"),
+                         verbatimTextOutput("trainAccuracyRandFor"),
+                         br(),
+                         h3("Testing accuracy for Random Forest model:"),
+                         verbatimTextOutput("testAccuracyRand"),
+                         br(),
+                         h3("Confusion matrix for Random Forest model:"),
+                         verbatimTextOutput("confRand"),
+                         br(),
+                         plotOutput("RandTreePlot"),
+                         br(),
+                         h3("Summary statistics for Random forest tree:"),
+                         verbatimTextOutput("summaryStatRandTree")
+                         
+                       ),
+                     )
+                     ),
                    tabPanel(
-                     "Prediction")
+                     "Prediction",
+                      sidebarLayout(
+                        sidebarPanel(
+                          selectInput("modelSelect","Select the model for prediction:",
+                                      c("Binary Logistic Regression"="log",
+                                        "Classification Tree"="classTree",
+                                        "Random Forest"="randFor"),
+                                      selected = "log"),
+                          br(),
+                          numericInput("agePred","Select the age:", value = 26,
+                                       min = 17, max=98),
+                          br(),
+                          selectInput("jobPred","Select the Job type for prediction:",
+                                      unique(bankDataUI$job)),
+                          br(),
+                          selectInput("maritalPred","Select the Marital status for prediction:",
+                                      unique(bankDataUI$marital)),
+                          br(),
+                          selectInput("educationPred","Select the type of education for prediction:",
+                                      unique(bankDataUI$education)),
+                          br(),
+                          selectInput("deafultPred","Select the type of default credit for prediction:",
+                                      unique(bankDataUI$default)),
+                          br(),
+                          selectInput("housingPred","Select the type of housing for prediction:",
+                                      unique(bankDataUI$housing)),
+                          br(),
+                          selectInput("loanPred","Select the if the customer has taken loan for prediction:",
+                                      unique(bankDataUI$loan)),
+                          br(),
+                          selectInput("contactPred","Select the type of contact used for connecting:",
+                                      unique(bankDataUI$contact)),
+                          br(),
+                          selectInput("monthPred","Select the month in which the customer was contacted:",
+                                      unique(bankDataUI$month)),
+                          br(),
+                          selectInput("dayPred","Select the day of the week on which the customer was contacted:",
+                                      unique(bankDataUI$day_of_week)),
+                          br(),
+                          numericInput("durationPred","Select the duration of the call(in seconds):", value = 258,
+                                       min = 0, max=4918),
+                          br(),
+                          numericInput("campaignPred","Select  number of contacts performed during this campaign for a 
+                                       particular customer:",
+                                       value = 3,
+                                       min = 1, max=56),
+                          br(),
+                          numericInput("pDaysPred","Select number of days that passed by after the customer was last
+                                       contacted:",
+                                       value = 3,
+                                       min = 0, max=27),
+                          br(),
+                          numericInput("previousPred","Select  number of contacts performed before this campaign for
+                                       this customer:",
+                                       value = 2,
+                                       min = 0, max=7),
+                          br(),
+                          selectInput("poutPred","Select outcome of the previous marketing campaign :",
+                                      unique(bankDataUI$poutcome)),
+                          br()
+                        ),
+                        mainPanel(
+                          textOutput("finalPred")
+                        )
+                      )
+                     )
            )
           )
 )

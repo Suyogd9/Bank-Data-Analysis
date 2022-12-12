@@ -30,12 +30,13 @@ This application is built using the [shinydashboard](https://rstudio.github.io/s
 11. dplyr
 12. ggpubr
 13. corrplot
+14. rpart
 
 ### R code for installing packages
 
 Copy this code snippet and run it on R terminal to install the required packages.
 ```
-install.packages(c("shiny","shinydashboard","tidyverse","DT","corrplot","caret","jpeg","shinyWidgets","shinythemes","rsconnect","dplyr","ggpubr","corrplot"))
+install.packages(c("shiny","shinydashboard","tidyverse","DT","corrplot","caret","jpeg","shinyWidgets","shinythemes","rsconnect","dplyr","ggpubr","corrplot","rpart"))
 ```
 
 ### Running the app

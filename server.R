@@ -229,38 +229,53 @@ shinyServer(function(input, output, session) {
   
   modelFitValues <- reactiveValues(glmModelFit = NULL, classTreeFit = NULL, randForFit = NULL)
   
+  N <- 3
   
   observeEvent(input$trainButton, {
     
-    subsetTrainglmDF <- dataset$train_data %>%
-      select(all_of(input$glmPredictors),y)
-    
-    set.seed(123)
-    modelFitValues$glmModelFit <- train(
-      form = y ~ .,
-      data = subsetTrainglmDF,
-      trControl = trainControl(method = "cv", number = 5),
-      method = "glm",
-      family = "binomial"
-    )
-  #-------------------------------------------------------------------------------#  
-    subsetTrainClassTreeDF <- dataset$train_data %>%
-      select(all_of(input$classTreePredictors),y)
-    
-    modelFitValues$classTreeFit <- rpart(y ~ ., data = dataset$train_data)
-  
-  #-------------------------------------------------------------------------------#  
-    
-    subsetTrainRandTreeDF <- dataset$train_data %>%
-      select(all_of(input$randomForestPredictors),y)
-    
-    modelFitValues$randForFit <- train(y ~ ., data=subsetTrainRandTreeDF, 
-                                       method="rf",
-                                       preProcess = c("center", "scale"),
-                                       trControl = trainControl(method = "cv",number = 2),
-                                       tuneGrid = data.frame(mtry = input$mtry)) 
-    
-  })
+    withProgress(message = 'Training in progress', {
+      
+      subsetTrainglmDF <- dataset$train_data %>%
+        select(all_of(input$glmPredictors),y)
+      
+      set.seed(123)
+      modelFitValues$glmModelFit <- train(
+        form = y ~ .,
+        data = subsetTrainglmDF,
+        trControl = trainControl(method = "cv", number = 5),
+        method = "glm",
+        family = "binomial"
+      )
+      
+      
+      # Update progress
+      incProgress(1/N)
+      
+    #-------------------------------------------------------------------------------#  
+      subsetTrainClassTreeDF <- dataset$train_data %>%
+        select(all_of(input$classTreePredictors),y)
+      
+      modelFitValues$classTreeFit <- rpart(y ~ ., data = dataset$train_data)
+      
+      # Update progress
+      incProgress(1/N)
+    #-------------------------------------------------------------------------------#  
+      
+      subsetTrainRandTreeDF <- dataset$train_data %>%
+        select(all_of(input$randomForestPredictors),y)
+      
+      modelFitValues$randForFit <- train(y ~ ., data=subsetTrainRandTreeDF, 
+                                         method="rf",
+                                         preProcess = c("center", "scale"),
+                                         trControl = trainControl(method = "cv",number = 2),
+                                         tuneGrid = data.frame(mtry = input$mtry)) 
+      
+       # Update progress
+        incProgress(1/N)
+      
+         
+    })
+})
   
   output$trainAccuracyglm <- renderText({
     if(is.null(modelFitValues$glmModelFit)){

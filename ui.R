@@ -542,7 +542,7 @@ ui <- navbarPage(
                                      "button that will train all the three models and all the results can be seen below."),
                                   br(),
                                   h3(style = "font-size: 16px; font-style: italic; color: #D8320E;",
-                                     "Warning!! Random Forest takes approximately 2 minutes to run with default settings...
+                                     "Warning!! Random Forest takes approximately 3 minutes to run with default settings...
                                       Please be patient!!"),
                                   br(),
                                   actionButton("trainButton", "Train Models"),

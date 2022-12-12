@@ -23,15 +23,23 @@ This application is built using the [shinydashboard](https://rstudio.github.io/s
 4. DT
 5. corrplot
 6. caret
+7. jpeg
+8. shinyWidgets
+9. shinythemes
+10. rsconnect
+11. dplyr
+12. ggpubr
+13. corrplot
 
-### R code to install and use these packages
+### R code for installing packages
 
+Copy this code snippet and run it on R terminal to install the required packages.
 ```
-install.packages(c("shiny","shinydashboard","tidyverse","DT","corrplot","caret"))
+install.packages(c("shiny","shinydashboard","tidyverse","DT","corrplot","caret","jpeg","shinyWidgets","shinythemes","rsconnect","dplyr","ggpubr","corrplot"))
 ```
 
-### Run the app
-
+### Running the app
+You can run this app without having to clone this repository. After installing the required packages given above, run the following command in your R terminal
 ```
 shiny::runGitHub("ST558-Final-Project","Suyogd9")
 ```

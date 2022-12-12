@@ -8,7 +8,7 @@ Shiny is an open-source R package that makes it simple to build interactive web 
 
 The app is built on the Portuguese Bank data and uses predictive modelling to identify the customers who are most likely to invest in long-term deposits. The app allows users to explore the data and model it to make predictions about which customers are most likely to invest. It also includes visualizations and other tools that help users interpret the results of their analyses.
 
-I believe that these observations and predictions can be applied to other countries with similar banking systems and population demographics. By using Shiny to create this app, I was able to make the data and analysis accessible and interactive, which can help the bank and others understand the data and make better-informed decisions.
+By using Shiny to create this app, I was able to make the data and analysis accessible and interactive, which can help the bank and others understand the data and make better-informed decisions.
 
 The [Bank Dataset](https://archive.ics.uci.edu/ml/datasets/Bank+Marketing#) used in this app pertains to direct marketing campaigns conducted by a Portuguese banking institution. The campaigns were conducted primarily through phone calls, and in some cases, multiple contacts were made to a single client in order to determine their interest in subscribing to a bank term deposit product. The data includes information on the clients' responses to the marketing efforts, as well as other relevant details such as their age, job, and educational background.
 

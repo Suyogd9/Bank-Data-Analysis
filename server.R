@@ -1,11 +1,4 @@
-#
-# This is the server logic of a Shiny web application. You can run the
-# application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 
 library(shiny)
 library(tidyverse)
@@ -321,7 +314,7 @@ shinyServer(function(input, output, session) {
         "Model not trained"
       }else{
         
-        summary(modelFitValues$glmModelFit)
+        print(modelFitValues$glmModelFit)
       
         }
   })
@@ -445,7 +438,7 @@ shinyServer(function(input, output, session) {
       "Model not trained"
     }else{
       
-      summary(modelFitValues$randForFit)
+      print(modelFitValues$randForFit)
       
     }
   })

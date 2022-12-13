@@ -384,7 +384,10 @@ ui <- navbarPage(
                          tags$br(),
                          box(width = 12,
                              border = FALSE,
-                             height = "320px",
+                             height = "360px",
+                             h2(style = "font-style: italic; color: blue;",
+                                "First Split the data for training...."),
+                             hr(),
                              h3(style = "font-size: 16px; font-style: italic; color: black;",
                              "Please select the value of the split ratio by using the slider input giving alongside. 
                               After selecting the split ratio click",strong("Split Data"),"button that will split the 
